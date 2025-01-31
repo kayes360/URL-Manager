@@ -1,0 +1,17 @@
+{
+    "manifest_version": 3,
+    "name": "Link Saver",
+    "description": "A simple Link Saver Chrome extension using React,TailwindCSS. save your frequently used links without searching every time.(Mostly useful for job seekers)",
+    "version": "1.0",
+    "permissions": ["storage", "clipboardWrite"],
+    "action": {
+        "default_popup": "index.html",
+        "default_icon": "icon.png"
+      },
+      "icons": {
+        "16": "icon.png",
+        "48": "icon.png",
+        "128": "icon.png"
+      }
+  }
+  

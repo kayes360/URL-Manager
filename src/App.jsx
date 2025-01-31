@@ -1,14 +1,16 @@
 
+import React from "react";
+import Popup from "./components/Popup";
 
 function App() {
+ 
 
   return (
     <>
-      <h1
-        className="text-3xl text-center text-red-700"
-      >Welcome to Vite with TailwindCSS and React</h1>
+    <Popup/>
     </>
-  )
+ 
+  );
 }
 
-export default App
+export default App;
