@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+@theme {
+  /* Convert your existing theme configuration here */
+  --color-primary: #3b82f6;
+  /* Add other theme variables */
+}
+
+/* Add any custom utilities or components here */
+@utility custom-class {
+  /* Your custom utility styles */
+}
