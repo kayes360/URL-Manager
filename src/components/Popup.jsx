@@ -76,7 +76,7 @@ export default function Popup() {
                 setIsAdding(true);
                 setIsEditing(false);
               }}
-              className="text-black border  hover:bg-slate-100  font-medium rounded-lg text-sm px-3 py-2.5 text-center inline-flex items-center ps-auto"
+              className="text-black border cursor-pointer hover:bg-slate-100  font-medium rounded-lg text-sm px-3 py-2.5 text-center inline-flex items-center ps-auto"
             >
               <FiPlus /> Add New Note
             </button>
@@ -110,14 +110,14 @@ export default function Popup() {
                     setIsAdding(false);
                     setIsEditing(false);
                   }}
-                  className="text-black border    bg-white hover:bg-slate-50  font-medium rounded-lg text-sm px-3 py-2.5 text-center inline-flex items-center me-2"
+                  className="text-black border cursor-pointer   bg-white hover:bg-slate-50  font-medium rounded-lg text-sm px-3 py-2.5 text-center inline-flex items-center me-2"
                 >
                   <FiX /> Cancel
                 </button>
                 <button
                   type="button"
                   onClick={handleAddNote}
-                  className="text-white    bg-black hover:bg-black/80 hover:text-white  border font-medium rounded-lg text-sm px-3 py-2.5 text-center inline-flex items-center"
+                  className="text-white cursor-pointer   bg-black hover:bg-black/80 hover:text-white  border font-medium rounded-lg text-sm px-3 py-2.5 text-center inline-flex items-center"
                 >
                   <FiCheck /> {isEditing ? "Update" : "Save"}
                 </button>
@@ -145,7 +145,7 @@ export default function Popup() {
                   ) : (
                     <button
                       onClick={() => handleCopy(note, index)}
-                      className="relative group"
+                      className="relative group cursor-pointer"
                     >
                       <FiCopy className="size-5"/>
                       <div className="absolute left-1/2 bottom-5 transform -translate-x-1/2 mt-1 text-center p-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity">
@@ -156,7 +156,7 @@ export default function Popup() {
 
                   <button
                     onClick={() => handleEdit(note, index)}
-                    className="relative group"
+                    className="relative group cursor-pointer"
                   >
                     <FiEdit  className="size-5"/>
                     <div className="absolute left-1/2 bottom-5 transform -translate-x-1/2 mt-1 text-center p-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity">
@@ -165,7 +165,7 @@ export default function Popup() {
                   </button>
                   <button
                     onClick={() => handleDelete(index)}
-                    className="relative group"
+                    className="relative group cursor-pointer"
                   >
                     <FiTrash2  className="size-5"/>
                     <div className="absolute left-1/2 bottom-5 transform -translate-x-1/2 mt-1 text-center p-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity">
