@@ -66,7 +66,7 @@ export default function Popup() {
 
   return (
 
-      <div className="p-4 w-l">
+      <div className="p-4 w-lg">
         <div>
           <div className="flex justify-end">
             <button
