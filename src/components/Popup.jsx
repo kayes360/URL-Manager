@@ -134,12 +134,12 @@ export default function Popup() {
             {notes.map((note, index) => (
               <li
                 key={index}
-                className="flex justify-between items-center border-b py-2"
+                className="flex justify-between items-center border-b py-4"
               >
                 <a href={note.link} className="text-blue-400 truncate max-w-64 w-72">
                   {note.text}
                 </a>
-                <div className="space-x-2">
+                <div className="space-x-4">
                 {copiedIndex === index ? (
                     <span className="text-xs">Copied</span>
                   ) : (
@@ -147,7 +147,7 @@ export default function Popup() {
                       onClick={() => handleCopy(note, index)}
                       className="relative group"
                     >
-                      <FiCopy />
+                      <FiCopy className="size-5"/>
                       <div className="absolute left-1/2 bottom-5 transform -translate-x-1/2 mt-1 text-center p-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity">
                         Copy
                       </div>
@@ -158,7 +158,7 @@ export default function Popup() {
                     onClick={() => handleEdit(note, index)}
                     className="relative group"
                   >
-                    <FiEdit />
+                    <FiEdit  className="size-5"/>
                     <div className="absolute left-1/2 bottom-5 transform -translate-x-1/2 mt-1 text-center p-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity">
                       Edit
                     </div>
@@ -167,7 +167,7 @@ export default function Popup() {
                     onClick={() => handleDelete(index)}
                     className="relative group"
                   >
-                    <FiTrash2 />
+                    <FiTrash2  className="size-5"/>
                     <div className="absolute left-1/2 bottom-5 transform -translate-x-1/2 mt-1 text-center p-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity">
                       Delete
                     </div>
