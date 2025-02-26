@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
-    "name": "Link Saver",
-    "description": "A simple Link Saver Chrome extension using React,TailwindCSS. save your frequently used links without searching every time.(Mostly useful for job seekers)",
+    "name": "URL Manager",
+    "description": "A lightweight and simple Chrome extension designed to help you manage and save your frequently used links effortlessly. Ideal for job seekers or anyone who needs quick access to important URLs.",
     "version": "1.0",
     "permissions": ["storage", "clipboardWrite"],
     "action": {

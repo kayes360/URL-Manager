@@ -1,6 +1,9 @@
 # URL Manager Browser Extension
 
-A lightweight and simple Chrome extension designed to help you manage and save your frequently used links effortlessly. Ideal for job seekers or anyone who needs quick access to important URLs.  
+## Live URL :link: https://url-manager-seven.vercel.app/
+
+
+A lightweight and simple Browser extension designed to help you manage and save your frequently used links effortlessly. Ideal for job seekers or anyone who needs quick access to important URLs.  
 
 ---
 
@@ -27,8 +30,15 @@ Link Saver is perfect for users who want a convenient way to store frequently ac
 2. Open Chrome and navigate to `chrome://extensions/`.  
 3. Enable "Developer Mode" from the top right corner.  
 4. Click "Load unpacked" and select the folder containing the extension files.  
+5. Extention will be automatically added yo the extension list.
 
- 
+ ### Microsoft Edge  
+
+1. Download or clone this repository.  
+2. Open Chrome and navigate to `edge://extensions/`.  
+3. Enable "Developer Mode" from left.  
+4. Click "Load unpacked" and select the folder containing the extension files.  
+5. Extention will be automatically added yo the extension list.
  
 
  
