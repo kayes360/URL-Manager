@@ -1,5 +1,4 @@
-import { useState, useEffect } from "react";
-// 1. Swapped 'react-icons/fi' for 'lucide-react' to resolve module compilation error
+import { useState, useEffect } from "react"; 
 import {
   Plus,
   Trash2, 
@@ -7,6 +6,7 @@ import {
   Copy,
   X,
   Edit,
+  CopyPlus,
 } from "lucide-react";
 import React from 'react'; // Explicit React import for type usage
 
@@ -38,6 +38,18 @@ export default function Popup() {
     setNotes(updatedNotes);
   };
 
+// useEffect(() => {
+//   chrome.storage.local.get(["chromeNotes"], (result) => {
+//     setNotes(result.chromeNotes || []);
+//   });
+// }, []);
+
+// const saveNotes = (updatedNotes: Note[]) => {
+//   chrome.storage.local.set({ chromeNotes: updatedNotes });
+//   setNotes(updatedNotes);
+// };
+
+
   const handleAddNote = () => {
     if (newNote.text.trim() && newNote.link.trim()) {
       if (isEditing && editIndex !== null) {
@@ -59,6 +71,11 @@ export default function Popup() {
     const updatedNotes = notes.filter((_, i) => i !== index);
     saveNotes(updatedNotes);
   };
+  const handleDuplicate = (note: Note, index: number) => {
+    const updatedNotes = [...notes];
+    updatedNotes.splice(index + 1, 0, { ...note }); // Insert duplicate right after original
+    saveNotes(updatedNotes);
+  }
 
   // Type the function arguments
   const handleCopy = (note: Note, index: number) => {
@@ -168,6 +185,19 @@ export default function Popup() {
                 {note.text}
               </a>
               <div className="flex items-center space-x-3">
+              <button
+                    onClick={() => handleDuplicate(note, index)}
+                    className="relative group cursor-pointer p-1 rounded-full hover:bg-gray-100 transition-colors"
+                    aria-label="Duplicate Link"
+                  >
+                    {/* 5. Replaced FiCopy with Lucide Copy */}
+                    <CopyPlus className="size-4 text-gray-600 group-hover:text-black"/>
+                    <div className="absolute left-1/2 bottom-8 transform -translate-x-1/2 p-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                      Duplicate Link
+                    </div>
+                  </button>
+
+
                 {copiedIndex === index ? (
                   <span className="text-xs font-semibold text-green-600 w-12 text-center">Copied</span>
                 ) : (
