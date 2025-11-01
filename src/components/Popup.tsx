@@ -1,14 +1,15 @@
-import { useState, useEffect } from "react"; 
+import { useState, useEffect } from "react";
 import {
   Plus,
-  Trash2, 
+  Trash2,
   Check,
   Copy,
   X,
   Edit,
   CopyPlus,
+  GripVertical,
 } from "lucide-react";
-import React from 'react'; // Explicit React import for type usage
+import React from "react"; // Explicit React import for type usage
 
 // Define the Note type
 type Note = {
@@ -25,30 +26,32 @@ export default function Popup() {
   const [editIndex, setEditIndex] = useState<number | null>(null);
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
 
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+
+  // useEffect(() => {
+  //   // Note: localStorage returns string or null. We check and parse.
+  //   const storedNotes = localStorage.getItem("chromeNotes");
+  //   const initialNotes: Note[] = storedNotes ? JSON.parse(storedNotes) : [];
+  //   setNotes(initialNotes);
+  // }, []);
+
+  // // Type the function argument
+  // const saveNotes = (updatedNotes: Note[]) => {
+  //   localStorage.setItem("chromeNotes", JSON.stringify(updatedNotes));
+  //   setNotes(updatedNotejs);
+  // };
+
   useEffect(() => {
-    // Note: localStorage returns string or null. We check and parse.
-    const storedNotes = localStorage.getItem("chromeNotes");
-    const initialNotes: Note[] = storedNotes ? JSON.parse(storedNotes) : [];
-    setNotes(initialNotes);
+    chrome.storage.local.get(["chromeNotes"], (result) => {
+      setNotes(result.chromeNotes || []);
+    });
   }, []);
 
-  // Type the function argument
   const saveNotes = (updatedNotes: Note[]) => {
-    localStorage.setItem("chromeNotes", JSON.stringify(updatedNotes));
+    chrome.storage.local.set({ chromeNotes: updatedNotes });
     setNotes(updatedNotes);
   };
-
-// useEffect(() => {
-//   chrome.storage.local.get(["chromeNotes"], (result) => {
-//     setNotes(result.chromeNotes || []);
-//   });
-// }, []);
-
-// const saveNotes = (updatedNotes: Note[]) => {
-//   chrome.storage.local.set({ chromeNotes: updatedNotes });
-//   setNotes(updatedNotes);
-// };
-
 
   const handleAddNote = () => {
     if (newNote.text.trim() && newNote.link.trim()) {
@@ -75,13 +78,13 @@ export default function Popup() {
     const updatedNotes = [...notes];
     updatedNotes.splice(index + 1, 0, { ...note }); // Insert duplicate right after original
     saveNotes(updatedNotes);
-  }
+  };
 
   // Type the function arguments
   const handleCopy = (note: Note, index: number) => {
     // Since this is a Chrome extension, navigator.clipboard should work fine.
     navigator.clipboard.writeText(`${note.link}`);
-    setCopiedIndex(index); 
+    setCopiedIndex(index);
 
     setTimeout(() => {
       setCopiedIndex(null); // Reset after 1 second
@@ -97,10 +100,42 @@ export default function Popup() {
   };
 
   // Type the event handler for input changes
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, field: keyof Note) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    field: keyof Note
+  ) => {
     setNewNote({ ...newNote, [field]: e.target.value });
   };
+  //draggable and reorder functionality
+  const handleDragStart = (index: number) => {
+    setDraggedIndex(index);
+  };
 
+  const handleDragEnd = () => {
+    if (
+      draggedIndex !== null &&
+      dragOverIndex !== null &&
+      draggedIndex !== dragOverIndex
+    ) {
+      const updatedNotes = [...notes];
+      const [draggedItem] = updatedNotes.splice(draggedIndex, 1);
+      updatedNotes.splice(dragOverIndex, 0, draggedItem);
+      saveNotes(updatedNotes);
+    }
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>, index: number) => {
+    e.preventDefault(); // Required to allow drop
+    if (draggedIndex !== index) {
+      setDragOverIndex(index);
+    }
+  };
+
+  const handleDragLeave = () => {
+    setDragOverIndex(null);
+  };
 
   return (
     <div className="p-4 w-lg min-w-80">
@@ -127,7 +162,7 @@ export default function Popup() {
               placeholder="Note text"
               value={newNote.text}
               // Use the dedicated typed change handler
-              onChange={(e) => handleInputChange(e, 'text')}
+              onChange={(e) => handleInputChange(e, "text")}
               className="w-full border rounded-md p-2 mb-2 focus:ring-black focus:border-black"
             />
             <input
@@ -135,7 +170,7 @@ export default function Popup() {
               placeholder="Note link"
               value={newNote.link}
               // Use the dedicated typed change handler
-              onChange={(e) => handleInputChange(e, 'link')}
+              onChange={(e) => handleInputChange(e, "link")}
               className="w-full border rounded-md p-2 mb-2 focus:ring-black focus:border-black"
             />
 
@@ -158,7 +193,8 @@ export default function Popup() {
                 className="text-white cursor-pointer bg-black hover:bg-black/80 hover:text-white border font-medium rounded-lg text-sm px-3 py-2.5 text-center inline-flex items-center"
               >
                 {/* 4. Replaced FiCheck with Lucide Check */}
-                <Check className="me-1 size-4" /> {isEditing ? "Update" : "Save"}
+                <Check className="me-1 size-4" />{" "}
+                {isEditing ? "Update" : "Save"}
               </button>
             </div>
           </div>
@@ -167,75 +203,115 @@ export default function Popup() {
 
       <h1 className="text-xl mt-4 mb-2 font-bold border-b pb-2">Saved Notes</h1>
       {notes.length === 0 ? (
-        <p className="text-gray-500">No notes available. Click 'Add New Note' to start organizing!</p>
+        <p className="text-gray-500">
+          No notes available. Click 'Add New Note' to start organizing!
+        </p>
       ) : (
-        <ul className="divide-y divide-gray-100">
+        <ul className="border border-slate-100 rounded-xl p-4 space-y-2 mt-4">
           {notes.map((note, index) => (
-            <li
-              key={index}
-              className="flex justify-between items-center py-4"
-            >
-              {/* Added target="_blank" and rel="noopener noreferrer" for safe link opening */}
-              <a 
-                href={note.link} 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="text-black hover:text-blue-600 transition-colors duration-200 truncate max-w-[calc(100%-120px)] text-sm"
+            <li key={index} className="relative">
+              {/* Drop indicator line */}
+              {dragOverIndex === index && draggedIndex !== index && (
+                <div className="absolute -top-1 left-0 right-0 h-0.5 bg-black z-20" />
+              )}
+              
+              <div
+                draggable
+                onDragStart={() => handleDragStart(index)}
+                onDragEnd={handleDragEnd}
+                onDragOver={(e) => handleDragOver(e, index)}
+                onDragLeave={handleDragLeave}
+                className={`
+                  flex justify-between items-center py-4 pl-4
+                  transition-all duration-150 bg-white rounded-lg border border-transparent
+                  ${
+                    draggedIndex === index
+                      ? "opacity-50 scale-[0.98] cursor-grabbing"
+                      : "opacity-100 scale-100"
+                  }
+                  ${
+                    draggedIndex !== null && draggedIndex !== index
+                      ? "opacity-60"
+                      : ""
+                  }
+                `}
               >
-                {note.text}
-              </a>
-              <div className="flex items-center space-x-3">
-              <button
-                    onClick={() => handleDuplicate(note, index)}
-                    className="relative group cursor-pointer p-1 rounded-full hover:bg-gray-100 transition-colors"
-                    aria-label="Duplicate Link"
-                  >
-                    {/* 5. Replaced FiCopy with Lucide Copy */}
-                    <CopyPlus className="size-4 text-gray-600 group-hover:text-black"/>
-                    <div className="absolute left-1/2 bottom-8 transform -translate-x-1/2 p-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                      Duplicate Link
-                    </div>
-                  </button>
-
-
-                {copiedIndex === index ? (
-                  <span className="text-xs font-semibold text-green-600 w-12 text-center">Copied</span>
-                ) : (
+                <div className="flex justify-center items-center gap-4">
                   <button
-                    onClick={() => handleCopy(note, index)}
-                    className="relative group cursor-pointer p-1 rounded-full hover:bg-gray-100 transition-colors"
-                    aria-label="Copy Link"
+                    onMouseDown={(e) => e.stopPropagation()}
+                    className="relative group cursor-grab active:cursor-grabbing p-1 rounded-full hover:bg-gray-100 transition-colors"
+                    aria-label="Drag to reorder"
                   >
-                    {/* 5. Replaced FiCopy with Lucide Copy */}
-                    <Copy className="size-4 text-gray-600 group-hover:text-black"/>
-                    <div className="absolute left-1/2 bottom-8 transform -translate-x-1/2 p-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                      Copy Link
+                    <GripVertical className="size-4 text-gray-400 group-hover:text-gray-600" />
+                    <div className="absolute left-1/2 bottom-8 transform -translate-x-1/2 px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                      Drag to reorder
                     </div>
                   </button>
-                )}
 
-                <button
-                  onClick={() => handleEdit(note, index)}
-                  className="relative group cursor-pointer p-1 rounded-full hover:bg-gray-100 transition-colors"
-                  aria-label="Edit Note"
-                >
-                  {/* 6. Replaced FiEdit with Lucide Edit */}
-                  <Edit  className="size-4 text-gray-600 group-hover:text-black"/>
-                  <div className="absolute left-1/2 bottom-8 transform -translate-x-1/2 p-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                    Edit
+                  <div className="flex-1 min-w-0 ml-2">
+                    <a
+                      href={note.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block text-black hover:text-blue-600 transition-colors duration-200 truncate text-sm font-medium"
+                    >
+                      {note.text}
+                    </a>
                   </div>
-                </button>
-                <button
-                  onClick={() => handleDelete(index)}
-                  className="relative group cursor-pointer p-1 rounded-full hover:bg-red-100 transition-colors"
-                  aria-label="Delete Note"
-                >
-                  {/* 7. Replaced FiTrash2 with Lucide Trash2 */}
-                  <Trash2  className="size-4 text-red-600 group-hover:text-red-800"/>
-                  <div className="absolute left-1/2 bottom-8 transform -translate-x-1/2 p-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                    Delete
+                </div>
+
+                <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-3">
+                    <button
+                      onClick={() => handleDuplicate(note, index)}
+                      className="relative group cursor-pointer p-1 rounded-full hover:bg-gray-100 transition-colors"
+                      aria-label="Duplicate Link"
+                    >
+                      <CopyPlus className="size-4 text-gray-600 group-hover:text-black" />
+                      <div className="absolute left-1/2 bottom-8 transform -translate-x-1/2 p-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                        Duplicate Link
+                      </div>
+                    </button>
+
+                    {copiedIndex === index ? (
+                      <span className="text-xs font-semibold text-green-600 w-12 text-center">
+                        Copied
+                      </span>
+                    ) : (
+                      <button
+                        onClick={() => handleCopy(note, index)}
+                        className="relative group cursor-pointer p-1 rounded-full hover:bg-gray-100 transition-colors"
+                        aria-label="Copy Link"
+                      >
+                        <Copy className="size-4 text-gray-600 group-hover:text-black" />
+                        <div className="absolute left-1/2 bottom-8 transform -translate-x-1/2 p-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                          Copy Link
+                        </div>
+                      </button>
+                    )}
+
+                    <button
+                      onClick={() => handleEdit(note, index)}
+                      className="relative group cursor-pointer p-1 rounded-full hover:bg-gray-100 transition-colors"
+                      aria-label="Edit Note"
+                    >
+                      <Edit className="size-4 text-gray-600 group-hover:text-black" />
+                      <div className="absolute left-1/2 bottom-8 transform -translate-x-1/2 p-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                        Edit
+                      </div>
+                    </button>
+                    <button
+                      onClick={() => handleDelete(index)}
+                      className="relative group cursor-pointer p-1 rounded-full hover:bg-red-100 transition-colors"
+                      aria-label="Delete Note"
+                    >
+                      <Trash2 className="size-4 text-red-600 group-hover:text-red-800" />
+                      <div className="absolute left-1/2 bottom-8 transform -translate-x-1/2 p-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                        Delete
+                      </div>
+                    </button>
                   </div>
-                </button>
+                </div>
               </div>
             </li>
           ))}
