@@ -216,7 +216,7 @@ export default function Popup() {
   };
 
   return (
-    <div className="p-4 w-lg min-w-80">
+    <div className="p-4 w-lg min-w-80 bg-slate-50">
       <div>
         <div className="flex justify-end">
           <button
@@ -287,7 +287,7 @@ export default function Popup() {
       ) : (
         <ul
           className="
-    rounded-xl p-4 space-y-2 mt-4 bg-slate-50 max-h-[500px] overflow-y-auto
+    rounded-xl p-4 space-y-2 mt-4   max-h-[500px] overflow-y-auto
 
     /* Modern subtle scrollbar */
     [&::-webkit-scrollbar]:w-1.5
@@ -432,18 +432,16 @@ export default function Popup() {
           })}
         </ul>
       )}
-      <div className="mt-4">
+      <div className="mt-4 px-4">
         <input
           type="text"
           placeholder="Search notes or links..."
           value={searchQuery}
           onChange={handleSearch}
           className="
-      w-full border border-gray-300 rounded-lg p-2
-      focus:border-black focus:ring-black
-      text-sm bg-white
-    "
-        />
+                w-full border border-gray-300 rounded-lg p-2
+                focus:border-black focus:ring-black
+                text-sm bg-white "/>
       </div>
     </div>
   );
