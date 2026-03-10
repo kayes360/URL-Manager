@@ -320,8 +320,8 @@ export default function Popup() {
                   onDragOver={(e) => handleDragOver(e, index)}
                   onDragLeave={handleDragLeave}
                   className={`
-                flex justify-between items-center pt-4 pb-6 pl-4
-                transition-all duration-150 bg-white rounded-lg border shadow-sm
+                flex justify-between items-start pt-4 pb-6 pl-4
+                transition-all duration-150 bg-white rounded-lg border shadow-sm max-w-md
                 ${
                   linkMatch && searchQuery.trim()
                     ? "border-blue-900 border- shadow-md scale-[1.01]"
@@ -339,7 +339,7 @@ export default function Popup() {
                 }
                 `}
                 >
-                  <div className="flex justify-center items-center gap-4">
+                  <div className="flex justify-center items-start gap-4">
                     <button
                       onMouseDown={(e) => e.stopPropagation()}
                       className="relative group cursor-grab active:cursor-grabbing p-1 rounded-full hover:bg-gray-100 transition-colors"
@@ -356,7 +356,7 @@ export default function Popup() {
                         href={note.link}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="block text-black hover:text-blue-600 transition-colors duration-200 truncate text-sm font-medium"
+                        className="block text-black hover:text-blue-600 transition-colors duration-200 truncate text-sm font-medium text-wrap"
                         dangerouslySetInnerHTML={{
                           __html: textMatch
                             ? highlightMatch(note.text, searchQuery)
@@ -445,4 +445,4 @@ export default function Popup() {
       </div>
     </div>
   );
-}
+} 
