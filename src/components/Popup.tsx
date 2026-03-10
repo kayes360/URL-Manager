@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 import {
   Plus,
   Trash2,
@@ -8,8 +8,8 @@ import {
   Edit,
   CopyPlus,
   GripVertical,
-} from "lucide-react";
-import React from "react"; // Explicit React import for type usage
+} from 'lucide-react';
+import React from 'react'; // Explicit React import for type usage
 
 // Define the Note type
 type Note = {
@@ -20,7 +20,7 @@ type Note = {
 export default function Popup() {
   // Type the state variables explicitly
   const [notes, setNotes] = useState<Note[]>([]);
-  const [newNote, setNewNote] = useState<Note>({ text: "", link: "" });
+  const [newNote, setNewNote] = useState<Note>({ text: '', link: '' });
   const [isAdding, setIsAdding] = useState<boolean>(false);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [editIndex, setEditIndex] = useState<number | null>(null);
@@ -30,27 +30,27 @@ export default function Popup() {
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
 
   //   search functionality states
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
   const [filteredNotes, setFilteredNotes] = useState<Note[]>(notes);
 
   useEffect(() => {
     // Load from chrome.storage if available, otherwise from localStorage
-    if (typeof chrome !== "undefined" && chrome.storage) {
-      chrome.storage.local.get(["chromeNotes"], (result) => {
+    if (typeof chrome !== 'undefined' && chrome.storage) {
+      chrome.storage.local.get(['chromeNotes'], (result) => {
         setNotes(result.chromeNotes || []);
       });
     } else {
-      const storedNotes = localStorage.getItem("chromeNotes");
+      const storedNotes = localStorage.getItem('chromeNotes');
       const initialNotes: Note[] = storedNotes ? JSON.parse(storedNotes) : [];
       setNotes(initialNotes);
     }
   }, []);
 
   const saveNotes = (updatedNotes: Note[]) => {
-    if (typeof chrome !== "undefined" && chrome.storage) {
+    if (typeof chrome !== 'undefined' && chrome.storage) {
       chrome.storage.local.set({ chromeNotes: updatedNotes });
     } else {
-      localStorage.setItem("chromeNotes", JSON.stringify(updatedNotes));
+      localStorage.setItem('chromeNotes', JSON.stringify(updatedNotes));
     }
     setNotes(updatedNotes);
   };
@@ -84,7 +84,7 @@ export default function Popup() {
       } else {
         saveNotes([...notes, newNote]);
       }
-      setNewNote({ text: "", link: "" });
+      setNewNote({ text: '', link: '' });
       setIsAdding(false);
     }
   };
@@ -122,7 +122,7 @@ export default function Popup() {
   // Type the event handler for input changes
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    field: keyof Note
+    field: keyof Note,
   ) => {
     setNewNote({ ...newNote, [field]: e.target.value });
   };
@@ -148,7 +148,7 @@ export default function Popup() {
 
   const handleDragOver = (
     e: React.DragEvent<HTMLDivElement>,
-    index: number
+    index: number,
   ) => {
     e.preventDefault(); // Required to allow drop
     if (draggedIndex !== index) {
@@ -190,7 +190,7 @@ export default function Popup() {
     const results = notes.filter(
       (note) =>
         note.text.toLowerCase().includes(q) ||
-        note.link.toLowerCase().includes(q)
+        note.link.toLowerCase().includes(q),
     );
 
     setFilteredNotes(results);
@@ -208,10 +208,10 @@ export default function Popup() {
   const highlightMatch = (text: string, query: string) => {
     if (!query.trim()) return text;
 
-    const regex = new RegExp(`(${query})`, "gi");
+    const regex = new RegExp(`(${query})`, 'gi');
     return text.replace(
       regex,
-      `<mark class="bg-yellow-300 text-black">$1</mark>`
+      `<mark class="bg-yellow-300 text-black">$1</mark>`,
     );
   };
 
@@ -222,7 +222,7 @@ export default function Popup() {
           <button
             type="button"
             onClick={() => {
-              setNewNote({ text: "", link: "" });
+              setNewNote({ text: '', link: '' });
               setIsAdding(true);
               setIsEditing(false);
             }}
@@ -240,7 +240,7 @@ export default function Popup() {
               placeholder="Note text"
               value={newNote.text}
               // Use the dedicated typed change handler
-              onChange={(e) => handleInputChange(e, "text")}
+              onChange={(e) => handleInputChange(e, 'text')}
               className="w-full border rounded-md p-2 mb-2 focus:ring-black focus:border-black"
             />
             <input
@@ -248,7 +248,7 @@ export default function Popup() {
               placeholder="Note link"
               value={newNote.link}
               // Use the dedicated typed change handler
-              onChange={(e) => handleInputChange(e, "link")}
+              onChange={(e) => handleInputChange(e, 'link')}
               className="w-full border rounded-md p-2 mb-2 focus:ring-black focus:border-black"
             />
 
@@ -258,7 +258,7 @@ export default function Popup() {
                 onClick={() => {
                   setIsAdding(false);
                   setIsEditing(false);
-                  setNewNote({ text: "", link: "" }); // Reset form on cancel
+                  setNewNote({ text: '', link: '' }); // Reset form on cancel
                 }}
                 className="text-black border cursor-pointer bg-white hover:bg-slate-50 font-medium rounded-lg text-sm px-3 py-2.5 text-center inline-flex items-center me-2"
               >
@@ -271,8 +271,8 @@ export default function Popup() {
                 className="text-white cursor-pointer bg-black hover:bg-black/80 hover:text-white border font-medium rounded-lg text-sm px-3 py-2.5 text-center inline-flex items-center"
               >
                 {/* 4. Replaced FiCheck with Lucide Check */}
-                <Check className="me-1 size-4" />{" "}
-                {isEditing ? "Update" : "Save"}
+                <Check className="me-1 size-4" />{' '}
+                {isEditing ? 'Update' : 'Save'}
               </button>
             </div>
           </div>
@@ -324,18 +324,18 @@ export default function Popup() {
                 transition-all duration-150 bg-white rounded-lg border shadow-sm max-w-md
                 ${
                   linkMatch && searchQuery.trim()
-                    ? "border-blue-900 border- shadow-md scale-[1.01]"
-                    : "border-gray-200"
+                    ? 'border-blue-900 border- shadow-md scale-[1.01]'
+                    : 'border-gray-200'
                 }
                 ${
                   draggedIndex === index
-                    ? "opacity-50 scale-[0.98] cursor-grabbing"
-                    : "opacity-100 scale-100"
+                    ? 'opacity-50 scale-[0.98] cursor-grabbing'
+                    : 'opacity-100 scale-100'
                 }
                 ${
                   draggedIndex !== null && draggedIndex !== index
-                    ? "opacity-60"
-                    : ""
+                    ? 'opacity-60'
+                    : ''
                 }
                 `}
                 >
@@ -420,11 +420,13 @@ export default function Popup() {
                       </button>
                     </div>
 
-                    <span className={`absolute top-6 right-5 bg-black text-white p-0.5 rounded-xs text-[10px] ${
-                  linkMatch && searchQuery.trim()
-                    ? "block"
-                    : "hidden"
-                }`}>link found</span>
+                    <span
+                      className={`absolute top-6 right-5 bg-black text-white p-0.5 rounded-xs text-[10px] ${
+                        linkMatch && searchQuery.trim() ? 'block' : 'hidden'
+                      }`}
+                    >
+                      link found
+                    </span>
                   </div>
                 </div>
               </li>
@@ -441,8 +443,9 @@ export default function Popup() {
           className="
                 w-full border border-gray-300 rounded-lg p-2
                 focus:border-black focus:ring-black
-                text-sm bg-white "/>
+                text-sm bg-white "
+        />
       </div>
     </div>
   );
-} 
+}
